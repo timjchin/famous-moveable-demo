@@ -92,8 +92,8 @@ define(function(require, exports, module) {
     textSize: [true, true],
     padding: 15,
     buttonContent: '',
-    show: 'rotateDown',
-    hide: 'rotateOut',
+    show: 'moveDown',
+    hide: 'fade',
     duration: 500
   };
 
@@ -111,7 +111,7 @@ define(function(require, exports, module) {
         var buttonSize = button.getSize();
         var textX = this._getTextX();
         text
-          .setOpacity(1, { duration: 500, curve: 'outExpo' })
+          .setOpacity(1, { duration: 250, curve: 'outExpo' })
           .setTransform(Transform.translate(textX, buttonSize[1]))
           .setTransform(Transform.translate(textX, buttonSize[1] + options.padding), {
             duration: 500,
@@ -140,7 +140,7 @@ define(function(require, exports, module) {
       'fade': function (button, text, options) {
         text.halt();
         text.setOpacity(0, { 
-          duration: 250,
+          duration: 150,
           curve: 'outExpo'
         });
       },
@@ -165,8 +165,8 @@ define(function(require, exports, module) {
   }
 
   HoverButton.prototype._getTextX = function () {
-      var buttonSize = button.getSize();
-      var textSize = text.getSize();
+      var buttonSize = this._button.getSize();
+      var textSize = this._text.getSize();
       return buttonSize[0] * 0.5 - textSize[0] * 0.5;
   }
 
