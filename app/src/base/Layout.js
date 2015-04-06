@@ -17,7 +17,7 @@ define(function(require, exports, module) {
     for (var i = 0; i < this._children.length; i++) {
       var child = this._children[i];
       this._hideChild(child);
-      this.bindEvents(child);
+      this.bindEvents(child, i);
       this.add(child);
     }
 
@@ -88,6 +88,12 @@ define(function(require, exports, module) {
     child.setOpacity(0, anim);
     child.setTransform(Transform.scale(0.001, 0.001), anim);
   }
+
+  Layout.prototype._showChild = function (child, anim) {
+    child.setOpacity(1, anim);
+    child.setTransform(Transform.identity, anim);
+  }
+  
 
   module.exports = Layout;
 });
