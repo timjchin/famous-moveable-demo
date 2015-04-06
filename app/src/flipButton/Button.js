@@ -25,6 +25,17 @@ define(function(require, exports, module) {
   Button.prototype.getSize = function () {
     return this._button.getSize();
   }
+  Button.prototype.addListener = function () {
+    return this._button.on.apply(this._button, arguments);
+  }
+
+  Button.prototype.on = Button.prototype.addListener;
+
+  Button.prototype.removeListener = function () {
+    return this._button.removeListener.apply(this._button, arguments);
+  }
+
+  Button.prototype.off = Button.prototype.removeListener;
 
   Button.prototype.bindEvents = function () {
     this._button.addListener('mousedown', this.onClick);
@@ -37,8 +48,12 @@ define(function(require, exports, module) {
   }
 
   Button.prototype.onClick = function () {
-    Button.animations.onClick[this.options.clickAnimation].call(this);
+    Button.animations.onClick[this.options.clickAnimation].call(this, this._button);
     if (this.options.event) this.emit(this.options.event);
+  }
+
+  Button.prototype.getEvent = function () {
+    return this.options.event;
   }
 
   Button.DEFAULT_OPTIONS = {
@@ -46,18 +61,18 @@ define(function(require, exports, module) {
     buttonSize: [true,true],
     textSize: [true, true],
     padding: 15,
-    clickAnimation: 'scaleDown',
+    clickAnimation: 'scalePop',
     buttonContent: '',
   };
   Button.animations = {
     onClick: {
-      'scaleDown': function () {
-        this._button.halt('transform');
+      'scalePop': function (elem) {
+        elem.halt('transform');
 
-        this._button.setTransform(
+        elem.setTransform(
             Utils.originMatrix(
               [0.5, 0.5], 
-              this.getSize(), 
+              elem.getSize(), 
               Transform.scale(0.5,0.5)))
 
           .setTransform(Transform.identity, {
