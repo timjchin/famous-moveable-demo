@@ -2,6 +2,8 @@
 define(function(require, exports, module) {
   'use strict';
   var Engine = require('famous/core/Engine');
+  var Utility = require('famous/utilities/Utility');
+  var Transform = require('famous/core/Transform');
 
   module.exports = {
     inherits: function (_parent, _child) {
@@ -29,6 +31,35 @@ define(function(require, exports, module) {
         }
       }
       return a;
+    },
+    originMatrix: function (origin, size, transform) {
+      return Transform.moveThen([origin[0] * size[0], origin[1] * size[1], 0], transform); 
+    },
+    mergeOptions: function (defaults, options) {
+      var cloned = Utility.clone(defaults);
+      for (var key in options) { 
+        cloned[key] = options[key];
+      }
+      return cloned;
+    },
+    listMethods: function (comp) {
+      var inheritance = [];
+
+      function getProto (obj) {
+        var name = obj.constructor.name;
+        inheritance.push({
+          name: name,
+          methods: Object.getOwnPropertyNames(obj)
+        });
+        if (obj.__proto__) {
+          getProto(obj.__proto__);
+        }
+      }
+
+      getProto(comp);
+
+      return inheritance;
+      
     }
   };
 
