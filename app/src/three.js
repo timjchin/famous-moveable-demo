@@ -3,35 +3,34 @@ define(function(require, exports, module) {
   var MoveableView = require('./base/MoveableView');
   var MoveableSurface = require('./base/MoveableSurface');
   var Transform = require('famous/core/Transform');
-  var Button = require('./flipButton/Button');
+  var HoverButton = require('./flipButton/HoverButton');
   var Layout = require('./base/Layout');
   var Utils = require('./base/Utils');
   var BarLayout = require('./flipButton/BarLayout');
   var Timer = require('famous/utilities/Timer');
   var SequentialLayout = require('./flipButton/SequentialLayout');
+  var Dropdown = require('./flipButton/Dropdown');
 
   function SceneThree () {
     MoveableView.apply(this, arguments);
     document.body.classList.add('scene-two');
 
-    var alignLeft = new Button({ 
+    var alignLeft = new HoverButton({ 
       buttonContent: '<i class="h1 button fa fa-align-left"></i>',
       textContent: '<h6 class="text-label">Left Align</h6>',
     });
-    window.a = Utils.listMethods(new MoveableSurface());
-    console.log(a);
 
-    var alignRight = new Button({ 
+    var alignRight = new HoverButton({ 
       buttonContent: '<i class="h1 button fa fa-align-right"></i>',
       textContent: '<h6 class="text-label">Right Align</h6>',
     });
 
-    var alignCenter = new Button({ 
+    var alignCenter = new HoverButton({ 
       buttonContent: '<i class="h1 button fa fa-align-center"></i>',
       textContent: '<h6 class="text-label">Center Align</h6>',
     });
 
-    var alignJustify = new Button({ 
+    var alignJustify = new HoverButton({ 
       buttonContent: '<i class="h1 button fa fa-align-justify"></i>',
       textContent: '<h6 class="text-label">Justify Align</h6>',
     });
@@ -50,13 +49,23 @@ define(function(require, exports, module) {
       align: [0.5, 0.5]
     });
 
-    Timer.setTimeout(function () {
-      barLayout.setOptions({ 
-        layout: 'collapsed'
-      });
-    }, 1500);
-
     this.add(barLayout);
+    window.barLayout = barLayout;
+
+    var dropdown = new Dropdown({ 
+      children: [
+        new MoveableSurface({ 
+        }),
+        new MoveableSurface({ 
+        }),
+        new MoveableSurface({ 
+        }),
+        new MoveableSurface({ 
+        }),
+      ],
+    });
+    
+    this.add(dropdown);
   }
 
   SceneThree.prototype = Object.create(MoveableView.prototype);
