@@ -2,6 +2,9 @@
 define(function(require, exports, module) {
   'use strict';
 
+  var OptionsManager = require('famous/core/OptionsManager');
+  var RenderNode = require('famous/core/RenderNode');
+  var EventEmitter = require('famous/core/EventEmitter');
   var View = require('famous/core/View');
   var Modifier = require('famous/core/Modifier');
   var Transitionable = require('famous/transitions/Transitionable');
@@ -12,10 +15,15 @@ define(function(require, exports, module) {
    *  @class MoveableView
    */
   function MoveableView (options) {
-    View.apply(this, arguments);
+    EventEmitter.apply(this, arguments);
 
+    this._rootNode = new RenderNode();
     this._mod = new Modifier();
-    this._node = this.add(this._mod);
+    this._node = this._rootNode.add(this._mod);
+
+    this.options = Utility.clone(this.constructor.DEFAULT_OPTIONS || View.DEFAULT_OPTIONS);
+    this._optionsManager = new OptionsManager(this.options);
+    if (options) this.setOptions(options);
 
     this._transitionables = {
       origin: undefined,
@@ -33,7 +41,7 @@ define(function(require, exports, module) {
     if (this.options.opacity !== undefined) this.setOpacity(this.options.opacity)
   }
 
-  MoveableView.prototype = Object.create(View.prototype);
+  MoveableView.prototype = Object.create(EventEmitter.prototype);
   MoveableView.prototype.constructor = MoveableView;
 
   MoveableView.DEFAULT_OPTIONS = {};
@@ -94,6 +102,32 @@ define(function(require, exports, module) {
       if (callback) callback();
     });
   }
+
+  MoveableView.prototype.off = EventEmitter.prototype.removeListener;
+
+  MoveableView.prototype.getOptions = function getOptions(key) {
+    return this._optionsManager.getOptions(key);
+  };
+
+  MoveableView.prototype.render = function () {
+    return this._rootNode.render();
+  }
+
+  MoveableView.prototype.setOptions = function setOptions(options) {
+    this._optionsManager.patch(options);
+  };
+
+  MoveableView.prototype.add = function add() {
+    return this._node.add.apply(this._node, arguments);
+  }; 
+
+  MoveableView.prototype.getSize = function getSize() {
+    if (this._node && this._node.getSize) {
+      return this._node.getSize.apply(this._node, arguments) || this.options.size;
+    }
+    else return this.options.size;
+  };
+  
   
   /**
    *  @method _setByKey
