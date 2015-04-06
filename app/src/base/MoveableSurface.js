@@ -7,10 +7,9 @@ define(function(require, exports, module) {
   function MoveableSurface (options) {
     MoveableView.apply(this, arguments);
     this._surface = new Surface(options);
-    this._surface.pipe(this._eventOutput);
 
+    this.add(this._surface);
     this.add = this._add = undefined;
-    MoveableView.prototype.add.call(this, this._surface);
   }
 
   MoveableSurface.prototype = Object.create(MoveableView.prototype);
@@ -26,6 +25,17 @@ define(function(require, exports, module) {
     }
     return obj; 
   }
+  MoveableSurface.prototype.addListener = function () {
+    return this._surface.on.apply(this._surface, arguments);
+  }
+
+  MoveableSurface.prototype.on = MoveableSurface.prototype.addListener;
+
+  MoveableSurface.prototype.removeListener = function () {
+    return this._surface.removeListener.apply(this._surface, arguments);
+  }
+
+  MoveableSurface.prototype.off = MoveableSurface.prototype.removeListener;
 
   MoveableSurface.prototype.setAttributes = function () {
     return this._surface.setAttributes.apply(this._surface, arguments);
