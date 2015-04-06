@@ -63,7 +63,7 @@ define(function(require, exports, module) {
       for (var i = 0; i < self._children.length; i++) { 
         var child = self._children[i];
         var size = child.getSize();
-        if (size[0] === true || size[1] === true || size[0] === 0 || size[1] === 0) { 
+        if (!size || size[0] === true || size[1] === true || size[0] === 0 || size[1] === 0) { 
           return false;
         }
         return true;
