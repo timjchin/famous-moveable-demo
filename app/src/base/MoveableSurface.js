@@ -6,6 +6,7 @@ define(function(require, exports, module) {
 
   function MoveableSurface (options) {
     MoveableView.apply(this, arguments);
+    if (!options.size) options.size = [true, true];
     this._surface = new Surface(options);
 
     this.add(this._surface);
