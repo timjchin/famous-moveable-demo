@@ -1,12 +1,11 @@
-define(function(require, exports, module) {
-  'use strict';
+define(function(require, exports, module) { 'use strict';
   var MoveableView = require('./base/MoveableView');
   var MoveableSurface = require('./base/MoveableSurface');
   var Transform = require('famous/core/Transform');
   var HoverButton = require('./flipButton/HoverButton');
+  var Button = require('./flipButton/Button');
   var Layout = require('./base/Layout');
   var Utils = require('./base/Utils');
-  var BarLayout = require('./flipButton/BarLayout');
   var Timer = require('famous/utilities/Timer');
   var SequentialLayout = require('./flipButton/SequentialLayout');
   var Dropdown = require('./flipButton/Dropdown');
@@ -18,6 +17,7 @@ define(function(require, exports, module) {
     var alignLeft = new HoverButton({ 
       buttonContent: '<i class="h1 button fa fa-align-left"></i>',
       textContent: '<h6 class="text-label">Left Align</h6>',
+      event: 'alignLeft'
     });
 
     var alignRight = new HoverButton({ 
@@ -54,13 +54,21 @@ define(function(require, exports, module) {
 
     var dropdown = new Dropdown({ 
       children: [
-        new MoveableSurface({ 
+        new Button({ 
+          buttonContent: '<div class="dropdown-button">test 1</div>',
+          event: 'test1'
         }),
-        new MoveableSurface({ 
+        new Button({ 
+          buttonContent: '<div class="dropdown-button">test 2</div>',
+          event: 'test2'
         }),
-        new MoveableSurface({ 
+        new Button({ 
+          buttonContent: '<div class="dropdown-button">test 3</div>',
+          event: 'test3'
         }),
-        new MoveableSurface({ 
+        new Button({ 
+          buttonContent: '<div class="dropdown-button">test 4</div>',
+          event: 'test4'
         }),
       ],
     });
