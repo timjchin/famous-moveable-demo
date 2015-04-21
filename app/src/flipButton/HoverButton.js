@@ -2,11 +2,11 @@
 define(function(require, exports, module) {
   'use strict';
 
-  var MoveableView = require('../base/MoveableView');
+  var MoveableView = require('famous-moveable/MoveableView');
   var Button = require('./Button');
-  var MoveableSurface = require('../base/MoveableSurface');
+  var MoveableSurface = require('famous-moveable/MoveableSurface');
   var Transform = require('famous/core/Transform');
-  var Utils = require('../base/Utils');
+  var Utils = require('famous-moveable/Utils');
 
   function HoverButton (options) {
     this.showText = this.showText.bind(this);
@@ -104,16 +104,14 @@ define(function(require, exports, module) {
         var buttonSize = button.getSize();
         var textX = this._getTextX();
         text
-          .setOpacity(1, { duration: 250, curve: 'outExpo' })
+          .setOpacity(1, { duration: 350, curve: 'outExpo' })
           .setTransform(
-            Transform.thenMove(
-              Transform.rotateY(Math.PI), 
-              [textX, buttonSize[1]]))
+            Transform.moveThen(
+              [textX, buttonSize[1]],
+              Transform.rotateY(Math.PI * 0.8)))
           .setTransform(Transform.translate(textX, buttonSize[1] + options.padding), {
-            duration: 250,
+            duration: 950,
             curve: 'inOutBack'
-          }, function () {
-            debugger; 
           })
       },
     },
@@ -135,9 +133,9 @@ define(function(require, exports, module) {
             curve: 'outExpo'
           })
           .setTransform(
-            Transform.thenMove(
-              Transform.rotateY(Math.PI * 0.5), 
-              [textX, buttonSize[1]]), {
+            Transform.moveThen(
+              [textX, buttonSize[1]],
+              Transform.rotateY(Math.PI * 0.5)), {
                 duration: 500, 
                 curve: 'inOutBack'
           })
