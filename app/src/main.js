@@ -1,23 +1,17 @@
-/* globals define */
 define(function(require, exports, module) {
   'use strict';
-  // import dependencies
   var Engine = require('famous/core/Engine');
+  var RegisterCurves = require('famous-moveable/RegisterCurves');
 
-  var MoveableView = require('./base/MoveableView');
-  var RegisterCurves = require('./base/RegisterCurves');
-
-  var Surface = require('famous/core/Surface');
-  var Transform = require('famous/core/Transform');
-
-  var SceneOne = require('./one');
-  var SceneTwo = require('./two');
   var SceneThree = require('./three');
-  var Button = require('./flipButton/Button');
+  var Modifier = require('famous/core/Modifier');
+  var Surface= require('famous/core/Surface');
 
   // create the main context
   var mainContext = Engine.createContext();
   mainContext.setPerspective(1000);
-
+  // chrome bug, ensure that it applies perspective.
+  mainContext.container.style.backfaceVisibility = 'hidden';
   mainContext.add(new SceneThree());
+
 });
