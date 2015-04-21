@@ -1,7 +1,8 @@
 /* globals define */
 define(function(require, exports, module) {
-  var Layout = require('../base/Layout');
+  var Layout = require('famous-moveable/Layout');
   var Transform = require('famous/core/Transform');
+  var Engine = require('famous/core/Engine');
 
   function Dropdown () {
     Layout.apply(this, arguments);
@@ -10,8 +11,14 @@ define(function(require, exports, module) {
       dropdown: Dropdown.states.closed,
       selected: this.options.selected
     };
-
-    this._showChild(this._children[this._state.selected]);
+    this.bindEvents();
+    this.close();
+    this._sizeDirtyFn = function () {
+      this._sizeDirty = false;
+    }.bind(this);
+    this._emitResize = function () {
+      this.emit('resize');
+    }.bind(this);
   }
 
   Dropdown.prototype = Object.create(Layout.prototype);
@@ -31,7 +38,7 @@ define(function(require, exports, module) {
 
   Dropdown.animations = {
     open: {
-      shuffle: function (child, index, selectedIndex, finalTranslate) {
+      shuffle: function (child, index, selectedIndex, finalTranslate, cb) {
           child.setTransform(Transform.identity);
           if (index !== 0) {
             child
@@ -42,20 +49,20 @@ define(function(require, exports, module) {
             .setTransform(Transform.translate(finalTranslate[0], finalTranslate[1], finalTranslate[2]), {
               curve: 'outBack',
               duration: 500
-            })
+            }, cb)
             .setOpacity(1, { duration: 400 });
       },
-      rotateIn: function (child, index, selectedIndex, finalTranslate, length) {
+      rotateIn: function (child, index, selectedIndex, finalTranslate, length, cb) {
         var size = child.getSize();
         var step = -(Math.PI * .5) / length;
         child
           .setTransform(
             Transform.thenMove(
               Transform.rotateX(index * step),
-              [ 0, finalTranslate[1], -finalTranslate[1]]
+              [ 0, finalTranslate[1], -finalTranslate[1] * 2]
             ), {
               curve: 'inOutElastic',
-              duration: 800
+              duration: 400
             })
           .setOpacity(0.6, {duration: 400 })
           .delayByKey('opacity', index * 50)
@@ -69,12 +76,12 @@ define(function(require, exports, module) {
       }
     },
     close: {
-      fade: function (child, index, selectedIndex) {
+      fade: function (child, index, selectedIndex, cb) {
         if (index === selectedIndex) { 
           child.setTransform(Transform.identity, {
             curve: 'outBack',
             duration: 500
-          });
+          }, cb);
         } 
         else {
           child
@@ -82,10 +89,10 @@ define(function(require, exports, module) {
             .setTransform(Transform.translate(0,0, -index * 25), { 
               curve: 'inOutBack',
               duration: 400
-            });
+            }, cb);
         }
       },
-      fadeThenReturn: function (child, index, selectedIndex, length) {
+      fadeThenReturn: function (child, index, selectedIndex, length, cb) {
         var delayStep = 100;
         var duration = 400;
         if (index === selectedIndex) {
@@ -93,10 +100,11 @@ define(function(require, exports, module) {
           child.setTransform(Transform.identity, {
             curve: 'outExpo',
             duration: duration 
-          });
+          }, cb);
         }
         else {
-          var translate = Transform.getTranslate(child.getTransform());
+          var transform = child.getTransform();
+          var translate = transform ? Transform.getTranslate(transform) : [0,0,0];
           child
             .setTransform(Transform.translate(0, translate[1], -75), {
               curve: 'outBack',
@@ -108,12 +116,11 @@ define(function(require, exports, module) {
             .setTransform(Transform.translate(0,0, -index * 5), { 
               curve: 'outExpo',
               duration: duration
-            });
+            }, cb);
         }
       }
     }
   }
-
 
   Dropdown.prototype.setSelected = function (index) {
     var child = this._children[index];
@@ -121,11 +128,11 @@ define(function(require, exports, module) {
     this._state.selected = index;
     if (child.getEvent) { 
       this.emit('selected', child.getEvent());
-      console.log('evt', child.getEvent());
     }
   } 
 
   Dropdown.prototype.open = function () {
+    this._sizeDirty = true;
     var anim = Dropdown.animations.open[this.options.openAnimation];
     if (!anim) return;
     var offsetY = 0;
@@ -134,19 +141,20 @@ define(function(require, exports, module) {
       var child = orderedChildren[i];
       child.halt();
       var size = child.getSize();
-      anim(child, i, this._state.selected, [0, offsetY], len);
+      anim(child, i, this._state.selected, [0, offsetY], len, this._sizeDirtyFn);
       offsetY += size[1] + this.options.padding;
     }
     this._state.dropdown = Dropdown.states.open;
   }
 
   Dropdown.prototype.close = function () {
+    this._sizeDirty = true;
     var anim = Dropdown.animations.close[this.options.closeAnimation];
     if (!anim) return;
     for (var i = 0, len = this._children.length; i < len; i++) { 
       var child = this._children[i];
       child.halt();      
-      anim(child, i, this._state.selected, len);
+      anim(child, i, this._state.selected, len, this._sizeDirtyFn);
     }
     this._state.dropdown = Dropdown.states.closed;
   }
@@ -158,9 +166,11 @@ define(function(require, exports, module) {
     return orderedChildren;
   }
 
-  Dropdown.prototype.bindEvents = function (elem, i) {
-    elem.on('touchdown', this._onClick.bind(this, elem));
-    elem.on('mouseup', this._onClick.bind(this, elem));
+  Dropdown.prototype.bindEvents = function () {
+    for (var i = 0; i < this._children.length; i++) { 
+      var elem = this._children[i];
+      elem.on('selected', this._onClick.bind(this, elem));
+    }
   }
 
   Dropdown.prototype._onClick = function (elem) {
@@ -172,6 +182,13 @@ define(function(require, exports, module) {
       this.setSelected(index);
       this.close();
     }
+  }
+
+  Dropdown.prototype.render = function () {
+    if (this._sizeDirty) {
+      Engine.nextTick(this._emitResize);
+    }
+    return Layout.prototype.render.call(this);
   }
 
   module.exports = Dropdown;
