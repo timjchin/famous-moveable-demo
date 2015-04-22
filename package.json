@@ -1,19 +1,13 @@
 {
   "name": "requirejs-seed",
-  "description": "A seed project used to keep track of what yo famous scaffolds....",
-  "version": "0.6.0",
-  "homepage": "https://github.com/Famous/requirejs-seed",
   "author": {
-    "name": "Myles Borins",
+    "name": "Tim Chin",
     "url": "http://github.com/Famous/"
   },
-  "license": "ISC",
+  "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git://github.com/Famous/requirejs-seed.git"
-  },
-  "bugs": {
-    "url": "https://github.com/Famous/requirejs-seed/issues"
+    "url": "https://github.com/timjchin/famous-moveable-demo"
   },
   "engines": {
     "node": ">= 0.10.0"

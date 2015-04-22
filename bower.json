@@ -1,7 +1,7 @@
 {
   "name": "april-demo",
   "description": "Making the web a little more animated",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "homepage": "",
   "authors": [
     {
@@ -29,6 +29,7 @@
     "almond": "~0.2.9",
     "famous-polyfills": "~0.3.0",
     "famous": "~0.3.5",
-    "font-awesome": "~4.3.0"
+    "font-awesome": "~4.3.0",
+    "famous-moveable": "~1.0.0"
   }
 }
