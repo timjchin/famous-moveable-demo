@@ -1,19 +1,14 @@
-##Dependencies
-It is actually quite simple really
-First make sure you have node.js installed... without that nothing works!  You can either install it with your favorite package manager or with [the installer](http://nodejs.org/download) found on [nodejs.org](http://nodejs.org).
-This project relies on grunt-cli, and bower to do all the heavy lifting for you
+## Installation & Get Running
 ```
 npm install -g grunt-cli bower
-```
-
-##Getting Started
-
-```
 npm install && bower install
+grunt serve
 ```
 
-That's it!!!
+## Demos
+`localhost:1337`:  Main example
+`localhost:1337/0.html` Base famo.us example
+`localhost:1337/1.html` Button example
+`localhost:1337/2.html` HoverButton example
 
-##Running the Development Server
 
-Simply run ```grunt serve``` and you will start a local development server and open Chrome.  Watch tasks will be running, and your browser will be automatically refreshed whenever a file in the repo changes.
